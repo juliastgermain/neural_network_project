@@ -1,0 +1,26 @@
+import numpy as np
+import pandas as pd
+
+# Load the dataset
+data = np.loadtxt('mfeat-pix.txt')
+
+# Create labels
+labels = np.array([i // 200 for i in range(2000)])
+
+# Split into training and testing sets
+X_train, X_test = data[:1000], data[1000:]
+y_train, y_test = labels[:1000], labels[1000:]
+
+import matplotlib.pyplot as plt
+
+def plot_sample_images(data, labels, num_samples=5):
+    fig, axes = plt.subplots(1, num_samples, figsize=(10, 2))
+    unique_labels = np.unique(labels)
+    for i, label in enumerate(unique_labels[:num_samples]):
+        idx = np.where(labels == label)[0][0]  # Get the first occurrence of the label
+        axes[i].imshow(data[idx].reshape(15, 16), cmap='gray')
+        axes[i].set_title(f"Label: {labels[idx]}")
+        axes[i].axis('off')
+    plt.show()
+
+plot_sample_images(X_train, y_train)
