@@ -1,0 +1,146 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
+from tensorflow.keras.utils import to_categorical
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+# Load the pixel data
+data = np.loadtxt('/Users/user/Documents/Neural Networks/ProjectDigits_materials/mfeat-pix.txt')
+
+# Reshape the data to (2000, 16, 15, 1)
+data = data.reshape(2000, 16, 15, 1)
+
+# Normalize the pixel values to be between 0 and 1
+data = data / 6.0
+
+# Create labels
+labels = np.repeat(np.arange(10), 200)
+
+# Convert labels to categorical format
+labels = to_categorical(labels, 10)
+
+# Split the data into training and testing datasets
+X_train, X_test, y_train, y_test = train_test_split(data, labels, test_size=0.5, stratify=labels, random_state=42)
+
+# Define the CNN architecture
+model = Sequential([
+    Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(16, 15, 1)),
+    MaxPooling2D(pool_size=(2, 2)),
+    Dropout(0.25),
+    Flatten(),
+    Dense(128, activation='relu'),
+    Dropout(0.5),
+    Dense(10, activation='softmax')
+])
+
+# Compile the model
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
+# Train the model
+history = model.fit(X_train, y_train, epochs=5, batch_size=32, validation_split=0.2)
+
+# Evaluate the model
+train_loss, train_accuracy = model.evaluate(X_train, y_train, verbose=0)
+test_loss, test_accuracy = model.evaluate(X_test, y_test, verbose=0)
+
+print(f'Train accuracy: {train_accuracy:.3f}')
+print(f'Test accuracy: {test_accuracy:.3f}')
+
+# Plot training & validation accuracy values
+plt.figure(figsize=(12, 4))
+plt.subplot(1, 2, 1)
+plt.plot(history.history['accuracy'])
+plt.plot(history.history['val_accuracy'])
+plt.title('Model accuracy')
+plt.ylabel('Accuracy')
+plt.xlabel('Epoch')
+plt.legend(['Train', 'Validation'], loc='upper left')
+
+# Plot training & validation loss values
+plt.subplot(1, 2, 2)
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('Model loss')
+plt.ylabel('Loss')
+plt.xlabel('Epoch')
+plt.legend(['Train', 'Validation'], loc='upper left')
+
+plt.tight_layout()
+plt.show()
+
+import numpy as np
+import matplotlib.pyplot as plt
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
+from tensorflow.keras.utils import to_categorical
+from sklearn.model_selection import train_test_split
+from tensorflow.keras.callbacks import EarlyStopping
+
+# Load the pixel data
+data = np.loadtxt('/Users/user/Documents/Neural Networks/ProjectDigits_materials/mfeat-pix.txt')
+
+# Reshape the data to (2000, 16, 15, 1)
+data = data.reshape(2000, 16, 15, 1)
+
+# Normalize the pixel values to be between 0 and 1
+data = data / 6.0
+
+# Create labels
+labels = np.repeat(np.arange(10), 200)
+
+# Convert labels to categorical format
+labels = to_categorical(labels, 10)
+
+# Split the data into training and testing datasets
+X_train, X_test, y_train, y_test = train_test_split(data, labels, test_size=0.5, stratify=labels, random_state=42)
+
+# Define the CNN architecture
+model = Sequential([
+    Conv2D(16, kernel_size=(3, 3), activation='relu', input_shape=(16, 15, 1)),
+    MaxPooling2D(pool_size=(2, 2)),
+    Dropout(0.25),
+    Flatten(),
+    Dense(64, activation='relu'),
+    Dropout(0.5),
+    Dense(10, activation='softmax')
+])
+
+# Compile the model
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
+# Define early stopping
+early_stopping = EarlyStopping(monitor='val_loss', patience=3)
+
+# Train the model
+history = model.fit(X_train, y_train, epochs=5, batch_size=64, validation_split=0.2, callbacks=[early_stopping])
+
+# Evaluate the model
+train_loss, train_accuracy = model.evaluate(X_train, y_train, verbose=0)
+test_loss, test_accuracy = model.evaluate(X_test, y_test, verbose=0)
+
+print(f'Train accuracy: {train_accuracy:.3f}')
+print(f'Test accuracy: {test_accuracy:.3f}')
+
+# Plot training & validation accuracy values
+plt.figure(figsize=(12, 4))
+plt.subplot(1, 2, 1)
+plt.plot(history.history['accuracy'])
+plt.plot(history.history['val_accuracy'])
+plt.title('Model accuracy')
+plt.ylabel('Accuracy')
+plt.xlabel('Epoch')
+plt.legend(['Train', 'Validation'], loc='upper left')
+
+# Plot training & validation loss values
+plt.subplot(1, 2, 2)
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('Model loss')
+plt.ylabel('Loss')
+plt.xlabel('Epoch')
+plt.legend(['Train', 'Validation'], loc='upper left')
+
+plt.tight_layout()
+plt.show()
